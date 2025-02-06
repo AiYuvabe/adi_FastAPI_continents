@@ -42,7 +42,7 @@ def cont_stats(cont_name : str):
 def cont_stat(cont_name : str, stat_name :str):
     if(cont_name in continent_stats_df["Continent"].to_list()) and (stat_name in continent_stats_df.columns.to_list()):
         cont_index = continent_stats_df["Continent"].index[continent_stats_df['Continent'] == cont_name]
-        result = continent_stats_df.iloc[cont_index][stat_name].to_dict()
-        return {f"{cont_name}'s {stat_name}":f"{result[1]}"}
+        result = continent_stats_df.iloc[cont_index][stat_name].tolist()
+        return {f"{cont_name}'s {stat_name}":f"{result[0]}"}
     else:
         raise HTTPException(status_code=404, detail="Continent or Stat not found.")
