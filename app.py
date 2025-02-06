@@ -21,7 +21,13 @@ app = FastAPI()
 @app.get("/")
 def home():
     continents = continent_stats_df["Continent"].to_list()
-    return(f"Welcome to the Homepage! Here are the available Continents: {continents}")
+    stats = continent_stats_df.columns.to_list()
+    response = {
+        "Message": "Welcome to the Continent Stats App",
+        "Continents Available ":continents,
+        "Stats Available ":stats
+    }
+    return(response)
 
 @app.get("/{cont_name}")
 def cont_stats(cont_name : str):
@@ -32,5 +38,11 @@ def cont_stats(cont_name : str):
     else:
         raise HTTPException(status_code=404, detail="Continent not found.")
     
-#@app.get("/countries/{cont_name}/{attribute}", response_model=str)
-#def cont_stat
+@app.get("/{cont_name}/{stat_name}")
+def cont_stat(cont_name : str, stat_name :str):
+    if(cont_name in continent_stats_df["Continent"].to_list()) and (stat_name in continent_stats_df.columns.to_list()):
+        cont_index = continent_stats_df["Continent"].index[continent_stats_df['Continent'] == cont_name]
+        result = continent_stats_df.iloc[cont_index][stat_name].to_dict()
+        return {f"{cont_name}'s {stat_name}":f"{result[1]}"}
+    else:
+        raise HTTPException(status_code=404, detail="Continent or Stat not found.")
